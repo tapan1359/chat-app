@@ -1,1 +1,4 @@
-## Chat App Functions.
+## Chat App Function
+
+graph LR;
+Server --- Client

@@ -1,4 +1,5 @@
 ## Chat App Function
 
-graph LR;
-Server --- Client
+graph TD;
+    A-->B;
+

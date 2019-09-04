@@ -3,6 +3,7 @@ const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
+const { generateMessage, generateUrl } = require('./utils/messages')
 
 const app = express()
 const server = http.createServer(app)
@@ -18,9 +19,9 @@ io.on('connection', (socket) => {
     console.log('new websocket connection')
 
     // emit welcome message
-    socket.emit('message', 'Welcome')
+    socket.emit('message',generateMessage('Welcome!'))
     // Emit mesaage to all users but joined one
-    socket.broadcast.emit('message', 'A new user has joined')
+    socket.broadcast.emit('message', generateMessage('A new user has joined'))
 
     // list to the event sendMessage from chat.js
     socket.on('sendMessage', (message, callback) => {
@@ -30,21 +31,21 @@ io.on('connection', (socket) => {
         }
 
         // Emit message event to all connected users
-        io.emit('message', message)
+        io.emit('message', generateMessage(message))
         callback()
     })
 
     // Listen to disconnect event
     socket.on('disconnect', () => {
         // Emit message to all the user
-        io.emit('message', 'User has left')
+        io.emit('message', generateMessage('User has left'))
     })
 
     // Location
     // Listen to event sendLocation
     socket.on('sendLocation', (position, callback) => {
         // Emit message to all user with google location link
-        io.emit('locationMessage', `https://google.com/maps/?q=${position.latitude},${position.longitude}`)
+        io.emit('locationMessage', generateUrl(`https://google.com/maps/?q=${position.latitude},${position.longitude}`))
         callback()
     })
 })

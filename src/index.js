@@ -18,10 +18,14 @@ app.use(express.static(publicDirPath))
 io.on('connection', (socket) => {
     console.log('new websocket connection')
 
-    // emit welcome message
-    socket.emit('message',generateMessage('Welcome!'))
-    // Emit mesaage to all users but joined one
-    socket.broadcast.emit('message', generateMessage('A new user has joined'))
+    socket.on('join', ({ username, room }) => {
+        socket.join(room)
+
+        // emit welcome message
+        socket.emit('message', generateMessage('Welcome!'))
+            // Emit mesaage to all users but joined one
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`))
+    })
 
     // list to the event sendMessage from chat.js
     socket.on('sendMessage', (message, callback) => {
@@ -31,7 +35,7 @@ io.on('connection', (socket) => {
         }
 
         // Emit message event to all connected users
-        io.emit('message', generateMessage(message))
+        io.to('City').emit('message', generateMessage(message))
         callback()
     })
 

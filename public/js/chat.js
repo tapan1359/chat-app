@@ -11,27 +11,30 @@ const $messages = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
 // Listen to event message
 socket.on('message', (message) => {
     console.log(message)
-    //render html template
+        //render html template
     const html = Mustache.render(messageTemplate, {
-        message: message.text,
-        createdAt: moment(message.createdAt).format('h:mm a')
-    })
-    //set html to message div
+            message: message.text,
+            createdAt: moment(message.createdAt).format('h:mm a')
+        })
+        //set html to message div
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
 // Listen to event locationMessage
 socket.on('locationMessage', (location) => {
     console.log(location)
-    //render html template
+        //render html template
     const html = Mustache.render(locationMessageTemplate, {
-        url: location.url,
-        createdAt: moment(location.createdAt).format('h:mm a')
-    })
-    // set location to div
+            url: location.url,
+            createdAt: moment(location.createdAt).format('h:mm a')
+        })
+        // set location to div
     $messages.insertAdjacentHTML('beforeend', html)
 
 })
@@ -65,7 +68,7 @@ $sendLocationButton.addEventListener('click', () => {
         return alert('Geolocation is not supported by your browser')
     }
 
-    $sendLocationButton.setAttribute('disabled', 'disabled')    
+    $sendLocationButton.setAttribute('disabled', 'disabled')
 
     navigator.geolocation.getCurrentPosition((position) => {
         //Emit sendLocation to server.
@@ -78,3 +81,5 @@ $sendLocationButton.addEventListener('click', () => {
         })
     })
 })
+
+socket.emit('join', { username, room })
